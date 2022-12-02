@@ -1,8 +1,8 @@
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.db import models
+from .managers import UserManager
 
 
-# Create your models here.
 class UserModel(AbstractUser):
     username = None
     first_name = None
@@ -10,6 +10,7 @@ class UserModel(AbstractUser):
     email = models.EmailField(unique=True)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+    objects = UserManager()
 
 
 class CityModel(models.Model):
