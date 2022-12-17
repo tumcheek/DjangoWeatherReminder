@@ -8,16 +8,37 @@ from rest_framework.views import APIView
 from .models import *
 from .serializers import *
 from .utils import *
+from .permissions import *
 
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
 
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.action == 'list' or self.action == 'destroy':
+            permission_classes = [IsAdminUser]
+        else:
+            permission_classes = [IsUser | IsAdminUser]
+        return [permission() for permission in permission_classes]
+
 
 class SubscribersViewSet(viewsets.ModelViewSet):
     serializer_class = SubscribersSerializer
     queryset = SubscribersModel.objects.all()
+
+    def get_permissions(self):
+        """
+        Instantiates and returns the list of permissions that this view requires.
+        """
+        if self.action == 'list' or self.action == 'destroy':
+            permission_classes = [IsAdminUser]
+        else:
+            permission_classes = [IsOwner | IsAdminUser]
+        return [permission() for permission in permission_classes]
 
 
 class CityViewSet(viewsets.ModelViewSet):
