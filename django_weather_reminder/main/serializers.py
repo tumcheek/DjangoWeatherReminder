@@ -30,6 +30,12 @@ class CitySerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class CountrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CountryModel
+        fields = '__all__'
+
+
 class PeriodSerializer(serializers.ModelSerializer):
     class Meta:
         model = PeriodModel
