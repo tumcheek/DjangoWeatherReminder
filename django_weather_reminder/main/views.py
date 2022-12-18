@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -30,6 +30,15 @@ class SubscribersViewSet(viewsets.ModelViewSet):
     serializer_class = SubscribersSerializer
     queryset = SubscribersModel.objects.all()
 
+    @action(detail=True, methods=['get'], url_path='weather-info')
+    def weather_info(self, request, pk):
+        query = get_object_or_404(request.user.subscribersmodel_set, pk=pk)
+        city = CityModel.objects.get(pk=query.city.pk)
+        country = CityModel.objects.get(pk=query.country.pk)
+        coords = get_city_coordinates(city.name, country.name)
+        weather_info = get_city_weather(coords['lat'], coords['lon'])
+        return Response(weather_info)
+
     def get_permissions(self):
         """
         Instantiates and returns the list of permissions that this view requires.
@@ -45,12 +54,10 @@ class CityViewSet(viewsets.ModelViewSet):
     serializer_class = CitySerializer
     queryset = CityModel.objects.all()
 
-    @action(detail=True, methods=['get'], url_path='weather-info')
-    def weather_info(self, request, pk):
-        query = get_object_or_404(CityModel, pk=pk)
-        coords = get_city_coordinates(query.name)
-        weather_info = get_city_weather(coords['lat'], coords['lon'])
-        return Response(weather_info)
+
+class CountryViewSet(viewsets.ModelViewSet):
+    serializer_class = CountrySerializer
+    queryset = CountryModel.objects.all()
 
 
 class PeriodViewSet(viewsets.ModelViewSet):
