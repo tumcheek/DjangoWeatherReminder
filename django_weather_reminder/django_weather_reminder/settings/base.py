@@ -195,3 +195,5 @@ SIMPLE_JWT = {
 
 # WEATHER API
 WEATHER_API_KEY = str(getenv('WEATHER_API_KEY'))
+WEATHER_URL = 'https://api.openweathermap.org/data/2.5/weather?'
+GEO_URL = 'https://api.openweathermap.org/geo/1.0/direct?'
