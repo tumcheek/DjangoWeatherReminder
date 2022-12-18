@@ -15,6 +15,12 @@ class CityFactory(DjangoModelFactory):
     name = factory.Faker('city')
 
 
+class CountryFactory(DjangoModelFactory):
+    class Meta:
+        model = CountryModel
+    name = factory.Faker('country_code')
+
+
 class PeriodFactory(DjangoModelFactory):
     class Meta:
         model = PeriodModel
@@ -27,6 +33,7 @@ class SubscribersFactory(DjangoModelFactory):
 
     user = factory.SubFactory(UserFactory)
     city = factory.SubFactory(CityFactory)
+    country = factory.SubFactory(CountryFactory)
     period = factory.SubFactory(PeriodFactory)
 
 
