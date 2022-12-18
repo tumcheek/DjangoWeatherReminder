@@ -8,24 +8,33 @@ from faker import Faker
 def delete_all_data():
     UserModel.objects.all().delete()
     CityModel.objects.all().delete()
+    CountryModel.objects.all().delete()
     PeriodModel.objects.all().delete()
     SubscribersModel.objects.all().delete()
 
 
-def create_fake_users(num_users):
+def create_fake_users(num_users, password):
     people = []
     for _ in range(num_users):
-        person = UserFactory()
+        person = UserFactory(password=password)
         people.append(person)
     return people
 
 
-def create_fake_cities(num_cities):
+def create_fake_cities(num_cities, country):
     cities = []
     for _ in range(num_cities):
-        city = CityFactory()
+        city = CityFactory(name=Faker(country).city_name())
         cities.append(city)
     return cities
+
+
+def create_fake_countries(countries_list_code):
+    countries = []
+    for code in countries_list_code:
+        country = CountryFactory(name=code)
+        countries.append(country)
+    return countries
 
 
 def create_fake_periods(periods_list):
@@ -36,8 +45,9 @@ def create_fake_periods(periods_list):
     return periods
 
 
-def create_fake_subscribers(num_subscribers, people, cities, periods):
+def create_fake_subscribers(num_subscribers, people, cities, countries, periods):
     for _ in range(num_subscribers):
-        SubscribersFactory(user=random.choice(people), city=random.choice(cities), period=random.choice(periods))
+        SubscribersFactory(user=random.choice(people), city=random.choice(cities), country=random.choice(countries),
+                           period=random.choice(periods))
 
 
