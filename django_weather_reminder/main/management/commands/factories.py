@@ -7,6 +7,7 @@ class UserFactory(DjangoModelFactory):
     class Meta:
         model = UserModel
     email = factory.Faker('email')
+    password = factory.PostGenerationMethodCall('set_password', 'defaultpassword')
 
 
 class CityFactory(DjangoModelFactory):
