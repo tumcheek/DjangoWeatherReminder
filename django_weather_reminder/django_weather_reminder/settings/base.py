@@ -197,3 +197,12 @@ SIMPLE_JWT = {
 WEATHER_API_KEY = str(getenv('WEATHER_API_KEY'))
 WEATHER_URL = 'https://api.openweathermap.org/data/2.5/weather?'
 GEO_URL = 'https://api.openweathermap.org/geo/1.0/direct?'
+
+
+# CELERY SETTINGS
+
+CELERY_BROKER_URL = str(getenv('BROKER'))
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_RESULT_BACKEND = str(getenv('BACKEND'))
+CELERY_CACHE_BACKEND = 'django-cache'
+CELERY_TASK_SERIALIZER = 'json'
