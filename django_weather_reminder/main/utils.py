@@ -27,4 +27,14 @@ def get_city_weather(lat, lon):
     return req.json()
 
 
+def create_message(weather_info, city, country):
+    location = f'{city}, {country}\n'
+    descriptions = f'The weather is {weather_info["weather"][0]["description"]}\n'
+    temperature = f'Temperature {weather_info["main"]["temp"]}, feels like {weather_info["main"]["feels_like"]}\n'\
+                  f'Min temperature {weather_info["main"]["temp_min"]} \n'\
+                  f'Max temperature {weather_info["main"]["temp_max"]} \n'
+    wind = f'Wind speed {weather_info["wind"]["speed"]}\n'
+    return location + descriptions + temperature + wind
+
+
 
