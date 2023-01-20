@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'rest_framework_simplejwt',
     'django_celery_beat',
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -201,7 +202,6 @@ GEO_URL = 'https://api.openweathermap.org/geo/1.0/direct?'
 
 
 # CELERY SETTINGS
-
 CELERY_BROKER_URL = str(getenv('BROKER'))
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_RESULT_BACKEND = str(getenv('BACKEND'))
