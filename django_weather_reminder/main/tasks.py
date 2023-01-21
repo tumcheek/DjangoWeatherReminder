@@ -29,4 +29,9 @@ def send_mail_task(weather_info, email, city, country):
     )
 
 
+@shared_task
+def send_weather_forecast_task(email, city, country):
+    weather_info = chain(get_city_coordinates_task.s(city, country) |
+                         get_city_weather_task.s() | send_mail_task.s(email, city, country))
+    weather_info.apply_async()
 
