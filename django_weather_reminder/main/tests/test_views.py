@@ -6,8 +6,8 @@ from rest_framework import status
 # Create your tests here.
 from rest_framework.utils import json
 
-from .models import UserModel, CityModel, PeriodModel, SubscribersModel, CountryModel
-from .views import UserViewSet, CityViewSet, SubscribersViewSet
+from django_weather_reminder.main.models import UserModel, CityModel, PeriodModel, SubscribersModel, CountryModel
+from django_weather_reminder.main.views import UserViewSet, CityViewSet, SubscribersViewSet
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
