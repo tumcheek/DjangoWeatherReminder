@@ -1,17 +1,9 @@
-from django.test import TestCase
-from django.urls import reverse, resolve, path, include
-from rest_framework.test import APITestCase, RequestsClient, APIRequestFactory, APILiveServerTestCase, APIClient, \
-    URLPatternsTestCase
+from django.urls import reverse
+from django_celery_beat.models import IntervalSchedule, PeriodicTask
+from rest_framework.test import APITestCase
 from rest_framework import status
-# Create your tests here.
-from rest_framework.utils import json
 
-from django_weather_reminder.main.models import UserModel, CityModel, PeriodModel, SubscribersModel, CountryModel
-from django_weather_reminder.main.views import UserViewSet, CityViewSet, SubscribersViewSet
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-)
+from ..models import UserModel, CityModel, PeriodModel, SubscribersModel, CountryModel
 
 
 class TestUserApi(APITestCase):
@@ -22,11 +14,22 @@ class TestUserApi(APITestCase):
         self.period = PeriodModel.objects.create(period_of_notice=6)
         self.subscription = SubscribersModel.objects.create(user=self.user, city=self.city,
                                                             country=self.country, period=self.period)
+        self.subscription_info = {
+            'email': self.user.email,
+            'city': self.city.name,
+            'country': self.country.name
+        }
+        self.interval = IntervalSchedule.objects.get_or_create(every=1, period=IntervalSchedule.HOURS,)
+        self.periodic_task = PeriodicTask.objects.create(
+            interval=self.interval[0],
+            name=f'Subscriptions {self.subscription.pk}',
+            task='main.end_weather_forecast_task',
+            kwargs=self.subscription_info
+        )
         self.users_url = reverse('main:usermodel-list')
         self.user_url = reverse('main:usermodel-detail', kwargs={"pk": self.user.pk})
-        self.subscriptions_url = reverse('main:subscribersmodel-list')
-        self.subscription_url = reverse('main:subscribersmodel-detail', kwargs={"pk": self.subscription.pk})
-        self.weather_info_url = reverse('main:subscribersmodel-weather-info', kwargs={'pk': self.subscription.pk})
+        self.subscriptions_url = reverse('main:subscriptions-list')
+        self.subscription_url = reverse('main:subscriptions-detail', kwargs={"pk": self.subscription.pk})
         self.cities_url = reverse('main:citymodel-list')
         self.city_url = reverse('main:citymodel-detail', kwargs={"pk": self.city.pk})
         self.countries_url = reverse('main:countrymodel-list')
@@ -61,29 +64,26 @@ class TestUserApi(APITestCase):
         response = self.client.delete(self.user_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-    def test_subscribers_list_get(self):
+    def test_subscriptions_list_get(self):
         response = self.client.get(self.subscriptions_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_subscribers_detail_get(self):
+    def test_subscription_detail_get(self):
         response = self.client.get(self.subscription_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_subscribers_detail_put(self):
+    def test_subscription_detail_put(self):
         response = self.client.put(self.subscription_url, data=self.subscription_info, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_subscribers_list_post(self):
+    def test_subscriptions_list_post(self):
         response = self.client.post(self.subscriptions_url, data=self.subscription_info, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-    def test_subscribers_detail_delete(self):
+    def test_subscription_detail_delete(self):
         response = self.client.delete(self.subscription_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-    def test_weather_info(self):
-        response = self.client.get(self.weather_info_url)
-        self.assertEqual(response.status_code, 200)
 
     def test_cities_list_get(self):
         response = self.client.get(self.cities_url)
