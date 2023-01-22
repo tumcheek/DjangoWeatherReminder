@@ -35,6 +35,9 @@ class PeriodModel(models.Model):
     def __str__(self):
         return str(self.period_of_notice)
 
+    def __int__(self):
+        return self.period_of_notice
+
 
 class SubscribersModel(models.Model):
     user = models.ForeignKey(UserModel, on_delete=models.CASCADE)
