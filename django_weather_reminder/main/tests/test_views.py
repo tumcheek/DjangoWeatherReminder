@@ -84,7 +84,6 @@ class TestUserApi(APITestCase):
         response = self.client.delete(self.subscription_url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
-
     def test_cities_list_get(self):
         response = self.client.get(self.cities_url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
