@@ -86,11 +86,11 @@ WSGI_APPLICATION = 'django_weather_reminder.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': str(getenv('NAME_DB')),
-        'USER': str(getenv('USER_DB')),
-        'PASSWORD': str(getenv('PASSWORD_DB')),
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'NAME': str(getenv('SQL_DATABASE')),
+        'USER': str(getenv('SQL_USER')),
+        'PASSWORD': str(getenv('SQL_PASSWORD')),
+        'HOST': str(getenv('SQL_HOST')),
+        'PORT': str(getenv('SQL_PORT')),
     }
 }
 
@@ -137,7 +137,6 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # EMAIL
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = str(getenv('EMAIL'))
