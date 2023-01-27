@@ -46,26 +46,36 @@ class PeriodViewSet(viewsets.ModelViewSet):
 class SubscriptionAPIView(APIView):
     def get(self, request, pk=None):
         if pk:
-            subscriptions = get_object_or_404(SubscribersModel, user=request.user.pk, pk=pk)
-            return Response(SubscribersSerializer(subscriptions, many=False).data)
+            subscriptions = get_object_or_404(
+                SubscribersModel, user=request.user.pk, pk=pk)
+            return Response(
+                SubscribersSerializer(
+                    subscriptions,
+                    many=False).data)
         else:
-            subscriptions = SubscribersModel.objects.filter(user=request.user.pk)
-            return Response(SubscribersSerializer(subscriptions, many=True).data)
+            subscriptions = SubscribersModel.objects.filter(
+                user=request.user.pk)
+            return Response(
+                SubscribersSerializer(
+                    subscriptions,
+                    many=True).data)
 
     def post(self, request):
         serializer = SubscribersSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         hours = PeriodModel.objects.get(pk=serializer.data.get("period"))
-        interval, created = IntervalSchedule.objects.get_or_create(every=hours, period=IntervalSchedule.HOURS,)
+        interval, created = IntervalSchedule.objects.get_or_create(
+            every=hours, period=IntervalSchedule.HOURS,)
         email = UserModel.objects.get(pk=serializer.data.get("user")).email
         city = CityModel.objects.get(pk=serializer.data.get("city")).name
-        country = CountryModel.objects.get(pk=serializer.data.get("country")).name
+        country = CountryModel.objects.get(
+            pk=serializer.data.get("country")).name
         subscription_info = json.dumps({
             'email': email,
             'city': city,
             'country': country
-            })
+        })
         PeriodicTask.objects.create(
             interval=interval,
             name=f'Subscriptions {serializer.data.get("id")}',
@@ -76,14 +86,17 @@ class SubscriptionAPIView(APIView):
 
     def put(self, request, pk):
         instance = get_object_or_404(SubscribersModel, pk=pk)
-        serializer = SubscribersSerializer(data=request.data, instance=instance)
+        serializer = SubscribersSerializer(
+            data=request.data, instance=instance)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         hours = PeriodModel.objects.get(pk=serializer.data.get("period"))
-        interval, created = IntervalSchedule.objects.get_or_create(every=hours, period=IntervalSchedule.HOURS, )
+        interval, created = IntervalSchedule.objects.get_or_create(
+            every=hours, period=IntervalSchedule.HOURS, )
         email = UserModel.objects.get(pk=serializer.data.get("user")).email
         city = CityModel.objects.get(pk=serializer.data.get("city")).name
-        country = CountryModel.objects.get(pk=serializer.data.get("country")).name
+        country = CountryModel.objects.get(
+            pk=serializer.data.get("country")).name
         subscription_info = json.dumps({
             'email': email,
             'city': city,
@@ -98,7 +111,7 @@ class SubscriptionAPIView(APIView):
 
     def delete(self, request, pk):
         user_pk = request.user.pk
-        subscription = get_object_or_404(SubscribersModel,pk=pk, user=user_pk)
+        subscription = get_object_or_404(SubscribersModel, pk=pk, user=user_pk)
         subscription.delete()
         PeriodicTask.objects.get(name=f"Subscriptions {pk}").delete()
         return Response({"delete": "ok"}, 204)

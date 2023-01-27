@@ -1,6 +1,7 @@
-from django.test import TestCase
-from ..tasks import get_city_coordinates_task, get_city_weather_task, send_mail_task, send_weather_forecast_task
 from unittest.mock import patch
+from django.test import TestCase
+
+from ..tasks import get_city_coordinates_task, get_city_weather_task, send_mail_task, send_weather_forecast_task
 
 
 class TestTasks(TestCase):
@@ -12,17 +13,16 @@ class TestTasks(TestCase):
                     {
                         'description': 'test',
                     }
-                ]
-            ,
+                ],
             'main': {
                 'temp': 1,
                 'feels_like': 1,
                 'temp_min': 1,
                 'temp_max': 2,
-            },
+                    },
             'wind': {
                 'speed': 1.1
-            }
+                    }
 
         }
         self.test_mail = 'test@test.com'
@@ -40,18 +40,13 @@ class TestTasks(TestCase):
             self.assertTrue(result.successful())
 
     def test_send_mail(self):
-        result = send_mail_task.delay(self.test_weather_info, self.test_mail, 'test', 'test')
+        result = send_mail_task.delay(
+            self.test_weather_info, self.test_mail, 'test', 'test')
         self.assertTrue(result.successful())
 
     def test_send_weather_forecast(self):
         with patch('main.tasks.get_city_coordinates', return_value=self.test_coordinates):
             with patch('main.tasks.get_city_weather', return_value=self.test_weather_info):
-                result = send_weather_forecast_task.delay(self.test_mail, 'test', 'test')
+                result = send_weather_forecast_task.delay(
+                    self.test_mail, 'test', 'test')
                 self.assertTrue(result.successful())
-
-
-
-
-
-
-
