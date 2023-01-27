@@ -47,3 +47,10 @@ class SubscribersModel(models.Model):
 
     def __str__(self):
         return str(self.user)
+
+
+class EmailSubjectModel(models.Model):
+    subject_text = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.subject_text
